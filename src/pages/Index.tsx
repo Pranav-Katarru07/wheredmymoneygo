@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useBudget } from '@/hooks/useBudget';
+import { useBudgetMonitor } from '@/hooks/useBudgetMonitor';
 import { CategoryBudgets } from '@/hooks/useBudget';
 import { ExpenseForm } from '@/components/ExpenseForm';
 import { SummaryCards } from '@/components/SummaryCards';
@@ -31,6 +32,9 @@ const Index = () => {
   const { expenses, addExpense, deleteExpense, updateExpense } = useExpenses();
   const { monthlyBudget, categoryBudgets, updateBudget, updateCategoryBudgets } = useBudget();
   const [showInsight, setShowInsight] = useState(false);
+
+  // Monitor budget thresholds and send notifications
+  useBudgetMonitor({ expenses, monthlyBudget, categoryBudgets });
 
   useEffect(() => {
     checkBudgetAlerts();

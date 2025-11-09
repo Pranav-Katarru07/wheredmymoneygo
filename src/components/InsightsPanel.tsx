@@ -90,8 +90,31 @@ export const InsightsPanel = ({ expenses }: InsightsPanelProps) => {
     setIsLoading(true);
 
     try {
+      // Get budget info for context
+      const { data: { user } } = await supabase.auth.getUser();
+      let budgetData = null;
+      
+      if (user) {
+        const { data: budget } = await supabase
+          .from('budgets')
+          .select('monthly_budget, category_budgets')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (budget) {
+          budgetData = {
+            monthlyBudget: Number(budget.monthly_budget),
+            categoryBudgets: budget.category_budgets
+          };
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke('chat-expenses', {
-        body: { question: userMessage, expenses }
+        body: { 
+          question: userMessage,
+          expenses: expenses.slice(0, 100),
+          budget: budgetData
+        }
       });
 
       if (error) {
