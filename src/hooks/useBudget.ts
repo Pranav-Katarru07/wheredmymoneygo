@@ -3,8 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface CategoryBudgets {
   Food: number;
+  Groceries: number;
   Travel: number;
+  Transportation: number;
   Shopping: number;
+  Entertainment: number;
+  Healthcare: number;
+  Utilities: number;
+  Education: number;
   Rent: number;
   Other: number;
 }
@@ -13,8 +19,14 @@ export const useBudget = () => {
   const [monthlyBudget, setMonthlyBudget] = useState<number>(500);
   const [categoryBudgets, setCategoryBudgets] = useState<CategoryBudgets>({
     Food: 0,
+    Groceries: 0,
     Travel: 0,
+    Transportation: 0,
     Shopping: 0,
+    Entertainment: 0,
+    Healthcare: 0,
+    Utilities: 0,
+    Education: 0,
     Rent: 0,
     Other: 0,
   });

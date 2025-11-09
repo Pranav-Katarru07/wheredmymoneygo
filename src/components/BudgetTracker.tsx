@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Expense } from '@/hooks/useExpenses';
 import { CategoryBudgets } from '@/hooks/useBudget';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings, ChevronDown, ChevronUp } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface BudgetTrackerProps {
   expenses: Expense[];
@@ -27,6 +28,12 @@ export const BudgetTracker = ({
   const [showCategories, setShowCategories] = useState(false);
   const [budgetInput, setBudgetInput] = useState(monthlyBudget.toString());
   const [categoryInputs, setCategoryInputs] = useState<CategoryBudgets>(categoryBudgets);
+
+  // Update inputs when props change
+  useEffect(() => {
+    setBudgetInput(monthlyBudget.toString());
+    setCategoryInputs(categoryBudgets);
+  }, [monthlyBudget, categoryBudgets]);
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -58,14 +65,45 @@ export const BudgetTracker = ({
     setShowCategories(false);
   };
 
-  const categories: (keyof CategoryBudgets)[] = ['Food', 'Travel', 'Shopping', 'Rent', 'Other'];
+  const allCategories: (keyof CategoryBudgets)[] = ['Food', 'Groceries', 'Travel', 'Transportation', 'Shopping', 'Entertainment', 'Healthcare', 'Utilities', 'Education', 'Rent', 'Other'];
+  
   const categoryEmojis = {
     Food: '🍔',
+    Groceries: '🛒',
     Travel: '✈️',
+    Transportation: '🚗',
     Shopping: '🛍️',
+    Entertainment: '🎬',
+    Healthcare: '⚕️',
+    Utilities: '💡',
+    Education: '📚',
     Rent: '🏠',
     Other: '📦',
   };
+
+  const COLORS = {
+    Food: 'hsl(160 65% 45%)',
+    Groceries: 'hsl(120 55% 50%)',
+    Travel: 'hsl(200 70% 60%)',
+    Transportation: 'hsl(220 60% 55%)',
+    Shopping: 'hsl(280 65% 60%)',
+    Entertainment: 'hsl(300 70% 65%)',
+    Healthcare: 'hsl(340 60% 55%)',
+    Utilities: 'hsl(180 50% 50%)',
+    Education: 'hsl(260 60% 60%)',
+    Rent: 'hsl(40 95% 55%)',
+    Other: 'hsl(0 0% 60%)',
+  };
+
+  // Prepare data for donut chart
+  const budgetChartData = allCategories
+    .map(cat => ({
+      name: cat,
+      value: categoryInputs[cat] || 0
+    }))
+    .filter(item => item.value > 0);
+
+  const totalCategoryBudget = budgetChartData.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <Card className="p-6 shadow-card">
@@ -94,15 +132,53 @@ export const BudgetTracker = ({
           
           <div className="border-t border-border pt-4">
             <Label className="text-sm font-medium mb-3 block">Category Budgets</Label>
-            <div className="space-y-3">
-              {categories.map((cat) => (
+            
+            {/* Donut Chart */}
+            {budgetChartData.length > 0 && (
+              <div className="mb-4">
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={budgetChartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, percent }) => 
+                        percent > 0.05 ? `${name} ${(percent * 100).toFixed(0)}%` : ''
+                      }
+                    >
+                      {budgetChartData.map((entry) => (
+                        <Cell key={entry.name} fill={COLORS[entry.name as keyof typeof COLORS]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value: number) => `$${value.toFixed(2)}`}
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="text-xs text-center text-muted-foreground">
+                  Total Category Budget: ${totalCategoryBudget.toFixed(2)}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-3 max-h-64 overflow-y-auto">
+              {allCategories.map((cat) => (
                 <div key={cat} className="space-y-1">
                   <Label className="text-xs text-muted-foreground">
                     {categoryEmojis[cat]} {cat}
                   </Label>
                   <Input
                     type="number"
-                    value={categoryInputs[cat]}
+                    value={categoryInputs[cat] || 0}
                     onChange={(e) => setCategoryInputs({
                       ...categoryInputs,
                       [cat]: Number(e.target.value)
@@ -196,7 +272,7 @@ export const BudgetTracker = ({
 
               {showCategories && (
                 <div className="mt-4 space-y-3">
-                  {categories.map((cat) => {
+                  {allCategories.map((cat) => {
                     const spent = categoryTotals[cat] || 0;
                     const budget = categoryBudgets[cat] || 0;
                     const percent = budget > 0 ? (spent / budget) * 100 : 0;
