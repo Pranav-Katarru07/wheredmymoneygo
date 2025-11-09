@@ -68,12 +68,32 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
 
   const filteredExpenses = useMemo(() => {
     return expenses.filter(expense => {
+      // Search query filter (searches title, amount, and formatted date)
+      if (filters.searchQuery) {
+        const query = filters.searchQuery.toLowerCase();
+        const matchesTitle = expense.title.toLowerCase().includes(query);
+        const matchesAmount = expense.amount.toString().includes(query);
+        const matchesDate = new Date(expense.date).toLocaleDateString().toLowerCase().includes(query);
+        
+        if (!matchesTitle && !matchesAmount && !matchesDate) {
+          return false;
+        }
+      }
+
+      // Category filter
       if (filters.category && expense.category !== filters.category) return false;
+      
+      // Mood filter
       if (filters.mood && expense.mood !== filters.mood) return false;
+      
+      // Amount filters
       if (filters.minAmount && expense.amount < filters.minAmount) return false;
       if (filters.maxAmount && expense.amount > filters.maxAmount) return false;
+      
+      // Date filters
       if (filters.startDate && expense.date < filters.startDate) return false;
       if (filters.endDate && expense.date > filters.endDate) return false;
+      
       return true;
     });
   }, [expenses, filters]);
@@ -128,7 +148,12 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
 
         {filteredExpenses.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            {expenses.length === 0 ? 'No expenses yet. Add your first expense! 🌱' : 'No expenses match your filters'}
+            {expenses.length === 0 
+              ? 'No expenses yet. Add your first expense! 🌱' 
+              : filters.searchQuery 
+                ? `No expenses match "${filters.searchQuery}"` 
+                : 'No expenses match your filters'
+            }
           </div>
         ) : (
           <div className="space-y-3 max-h-[400px] overflow-y-auto mt-4">

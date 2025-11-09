@@ -4,9 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, Search } from 'lucide-react';
 
 export interface ExpenseFilterOptions {
+  searchQuery?: string;
   category?: string;
   mood?: string;
   minAmount?: number;
@@ -35,10 +36,25 @@ export const ExpenseFilters = ({ onFilterChange, onReset }: ExpenseFiltersProps)
     onReset();
   };
 
-  const hasActiveFilters = Object.values(filters).some(v => v !== undefined);
+  const hasActiveFilters = Object.entries(filters).some(([key, value]) => 
+    key !== 'searchQuery' && value !== undefined
+  );
 
   return (
     <div className="space-y-3">
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Search by title, amount, or date..."
+          value={filters.searchQuery || ''}
+          onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
+      {/* Filter Buttons */}
       <div className="flex gap-2">
         <Button
           variant="outline"
@@ -47,12 +63,12 @@ export const ExpenseFilters = ({ onFilterChange, onReset }: ExpenseFiltersProps)
           className="gap-2"
         >
           <Filter className="w-4 h-4" />
-          Filters {hasActiveFilters && `(${Object.values(filters).filter(v => v).length})`}
+          Advanced Filters {hasActiveFilters && `(${Object.entries(filters).filter(([k, v]) => k !== 'searchQuery' && v).length})`}
         </Button>
-        {hasActiveFilters && (
+        {(hasActiveFilters || filters.searchQuery) && (
           <Button variant="ghost" size="sm" onClick={handleReset} className="gap-2">
             <X className="w-4 h-4" />
-            Clear
+            Clear All
           </Button>
         )}
       </div>
@@ -72,8 +88,14 @@ export const ExpenseFilters = ({ onFilterChange, onReset }: ExpenseFiltersProps)
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   <SelectItem value="Food">Food</SelectItem>
+                  <SelectItem value="Groceries">Groceries</SelectItem>
                   <SelectItem value="Travel">Travel</SelectItem>
+                  <SelectItem value="Transportation">Transportation</SelectItem>
                   <SelectItem value="Shopping">Shopping</SelectItem>
+                  <SelectItem value="Entertainment">Entertainment</SelectItem>
+                  <SelectItem value="Healthcare">Healthcare</SelectItem>
+                  <SelectItem value="Utilities">Utilities</SelectItem>
+                  <SelectItem value="Education">Education</SelectItem>
                   <SelectItem value="Rent">Rent</SelectItem>
                   <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
