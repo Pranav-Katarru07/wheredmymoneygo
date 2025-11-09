@@ -14,6 +14,7 @@ import { ExpenseList } from '@/components/ExpenseList';
 import { MotivationBanner } from '@/components/MotivationBanner';
 import { NotificationSettings } from '@/components/NotificationSettings';
 import { SavingsGoals } from '@/components/SavingsGoals';
+import { SampleDataGenerator } from '@/components/SampleDataGenerator';
 import { toast } from '@/hooks/use-toast';
 import { Wallet, LogOut, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -97,6 +98,9 @@ const Index = () => {
     }
   };
 
+  const handleSampleDataGenerated = () => {
+    window.location.reload();
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -119,6 +123,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <SampleDataGenerator onGenerated={handleSampleDataGenerated} />
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="sm">
