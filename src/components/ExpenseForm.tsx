@@ -180,8 +180,14 @@ export const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Food">🍔 Food</SelectItem>
+              <SelectItem value="Groceries">🛒 Groceries</SelectItem>
               <SelectItem value="Travel">✈️ Travel</SelectItem>
+              <SelectItem value="Transportation">🚗 Transportation</SelectItem>
               <SelectItem value="Shopping">🛍️ Shopping</SelectItem>
+              <SelectItem value="Entertainment">🎮 Entertainment</SelectItem>
+              <SelectItem value="Healthcare">💊 Healthcare</SelectItem>
+              <SelectItem value="Utilities">💡 Utilities</SelectItem>
+              <SelectItem value="Education">📚 Education</SelectItem>
               <SelectItem value="Rent">🏠 Rent</SelectItem>
               <SelectItem value="Other">📦 Other</SelectItem>
             </SelectContent>

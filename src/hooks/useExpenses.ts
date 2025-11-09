@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 export interface Expense {
   id: string;
   amount: number;
-  category: 'Food' | 'Travel' | 'Shopping' | 'Rent' | 'Other';
+  category: 'Food' | 'Travel' | 'Shopping' | 'Rent' | 'Entertainment' | 'Healthcare' | 'Utilities' | 'Transportation' | 'Education' | 'Groceries' | 'Other';
   mood: 'Happy' | 'Stressed' | 'Bored' | 'Neutral';
   note: string;
   date: string;

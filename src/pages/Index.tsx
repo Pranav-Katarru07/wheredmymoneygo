@@ -12,13 +12,19 @@ import { InsightsPanel } from '@/components/InsightsPanel';
 import { BudgetTracker } from '@/components/BudgetTracker';
 import { ExpenseList } from '@/components/ExpenseList';
 import { MotivationBanner } from '@/components/MotivationBanner';
-import { RecurringExpensesDialog } from '@/components/RecurringExpensesDialog';
-import { SampleDataGenerator } from '@/components/SampleDataGenerator';
 import { NotificationSettings } from '@/components/NotificationSettings';
 import { SavingsGoals } from '@/components/SavingsGoals';
 import { toast } from '@/hooks/use-toast';
-import { Wallet, LogOut } from 'lucide-react';
+import { Wallet, LogOut, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState as useNotificationDialog } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -91,9 +97,6 @@ const Index = () => {
     }
   };
 
-  const handleSampleDataGenerated = () => {
-    window.location.reload();
-  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -116,8 +119,20 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <SampleDataGenerator onGenerated={handleSampleDataGenerated} />
-              <RecurringExpensesDialog />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Bell className="w-4 h-4 mr-2" />
+                    Notifications
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Notification Settings</DialogTitle>
+                  </DialogHeader>
+                  <NotificationSettings />
+                </DialogContent>
+              </Dialog>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
@@ -131,9 +146,6 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8 space-y-8 max-w-7xl">
         {/* Motivation Banner */}
         <MotivationBanner />
-
-        {/* Notification Settings */}
-        <NotificationSettings />
 
         {/* Summary Cards */}
         <SummaryCards expenses={expenses} />

@@ -48,6 +48,12 @@ const getCategoryEmoji = (category: Expense['category']) => {
     case 'Travel': return '✈️';
     case 'Shopping': return '🛍️';
     case 'Rent': return '🏠';
+    case 'Entertainment': return '🎮';
+    case 'Healthcare': return '💊';
+    case 'Utilities': return '💡';
+    case 'Transportation': return '🚗';
+    case 'Education': return '📚';
+    case 'Groceries': return '🛒';
     case 'Other': return '📦';
   }
 };
@@ -103,9 +109,16 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
   return (
     <>
       <Card className="p-6 shadow-card">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold text-foreground">Recent Expenses 📝</h3>
-          <DataExport expenses={filteredExpenses} />
+        <div className="space-y-4">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-foreground mb-2">All Expenses</h2>
+            <p className="text-muted-foreground">Track and manage your spending history</p>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-foreground">Recent Expenses 📝</h3>
+            <DataExport expenses={filteredExpenses} />
+          </div>
         </div>
         
         <ExpenseFilters 
@@ -207,8 +220,14 @@ export const ExpenseList = ({ expenses, onDelete, onUpdate }: ExpenseListProps) 
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Food">🍔 Food</SelectItem>
+                  <SelectItem value="Groceries">🛒 Groceries</SelectItem>
                   <SelectItem value="Travel">✈️ Travel</SelectItem>
+                  <SelectItem value="Transportation">🚗 Transportation</SelectItem>
                   <SelectItem value="Shopping">🛍️ Shopping</SelectItem>
+                  <SelectItem value="Entertainment">🎮 Entertainment</SelectItem>
+                  <SelectItem value="Healthcare">💊 Healthcare</SelectItem>
+                  <SelectItem value="Utilities">💡 Utilities</SelectItem>
+                  <SelectItem value="Education">📚 Education</SelectItem>
                   <SelectItem value="Rent">🏠 Rent</SelectItem>
                   <SelectItem value="Other">📦 Other</SelectItem>
                 </SelectContent>
